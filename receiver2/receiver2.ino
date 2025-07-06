@@ -3,7 +3,7 @@
 #include <ESP32Servo.h>
 
 // WiFi credentials (must match the transmitter's AP)
-const char* ssid = "ESP32_AP";
+const char* ssid = "ESP32-12341";
 const char* password = "12345678";
 
 

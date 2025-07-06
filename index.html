@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Servo Control Server</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    main {
+      display: flex;
+      justify-content: space-between;
+      gap: 1em;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 16px 0;
+    }
+    .server-section {
+      background-color: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 24px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3182ce;
+      box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+    }
+    button {
+      padding: 8px 16px;
+      margin: 6px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition:
+        background-color 0.2s,
+        transform 0.1s;
+    }
+    button:hover {
+      transform: translateY(-1px);
+    }
+    .btn-connect {
+      background-color: #4a5568;
+      color: white;
+    }
+    .btn-connect:hover {
+      background-color: #2d3748;
+    }
+    .btn-send {
+      background-color: #3182ce;
+      color: white;
+    }
+    .btn-send:hover {
+      background-color: #2b6cb0;
+    }
+    .btn-delete {
+      background-color: #e53e3e;
+      color: white;
+    }
+    .btn-delete:hover {
+      background-color: #c53030;
+    }
+    .btn-add {
+      background-color: #38a169;
+      color: white;
+    }
+    .btn-add:hover {
+      background-color: #2f855a;
+    }
+    .status,
+    .error {
+      padding: 10px;
+      margin: 12px 0;
+      border-radius: 6px;
+      font-size: 14px;
+      animation: fadeIn 0.5s ease-in;
+      text-align: center;
+    }
+    .status {
+      background-color: #e6fffa;
+      color: #2f855a;
+    }
+    .error {
+      background-color: #fff5f5;
+      color: #c53030;
+    }
+    .receiver-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 24px;
+    }
+    .receiver-table th,
+    .receiver-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .receiver-table th {
+      background-color: #edf2f7;
+      font-weight: 500;
+      font-size: 14px;
+      color: #4a5568;
+    }
+    .receiver-table td input[type="text"] {
+      margin: 0;
+    }
+    .receiver-table td button {
+      margin: 0 4px;
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background-color: #f7fafc;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.5s ease-in;
+    }
+    .history-table th,
+    .history-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .history-table th {
+      background-color: #e2e8f0;
+      font-weight: 500;
+      font-size: 14px;
+      color: #2d3748;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .servo-main {
+      margin-inline: 1em;
+    }
+
+    .table-main {
+      margin-inline: 1em;
+    }
+  </style>
+  <body>
+    <div class="server-section">
+      <h2>Database Server</h2>
+      <form id="connectForm" action="/connect" method="POST">
+        <input
+          type="text"
+          name="serverIP"
+          id="serverIP"
+          placeholder="Last number, e.g., 2 for 192.168.4.2"
+        />
+        <button type="submit" class="btn-connect">Connect to Server</button>
+      </form>
+    </div>
+    <main>
+      <div class="servo-main">
+        <div>
+          <h2>ESP32 Servo Control 1</h2>
+          <input type="hidden" id="ip1" />
+          <button onclick="location.href='/servo1?pos1=0?ip1=192.168.4.68'">
+            Move to 0°
+          </button>
+          <button onclick="location.href='/servo1?pos1=90?ip1=192.168.4.68'">
+            Move to 90°
+          </button>
+          <button onclick="location.href='/servo1?pos1=180?ip1=192.168.4.68'">
+            Move to 180°
+          </button>
+        </div>
+        <div>
+          <h2>ESP32 Servo Control 2</h2>
+          <button onclick="location.href='/servo2?pos2=0?ip2=192.168.4.69'">
+            Move to 0°
+          </button>
+          <button onclick="location.href='/servo2?pos2=90?ip2=192.168.4.69'">
+            Move to 90°
+          </button>
+          <button onclick="location.href='/servo2?pos2=180?ip2=192.168.4.69'">
+            Move to 180°
+          </button>
+        </div>
+      </div>
+      <div class="table-main">
+        <h2>Text History</h2>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th style="width: 10px">ID</th>
+              <th>Receiver</th>
+              <th>Pos</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="historyTable"></tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>
